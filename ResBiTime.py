@@ -115,8 +115,8 @@ class AverageMeter(object):
 
 def get_ds():
     leadlist = [6, 7, 8, 9, 12]
-    lead_files = [f'../lead{i}.txt' for i in leadlist]
-    label_file = '../labels.txt'
+    lead_files = [f'9classPreprocess/lead{i}.txt' for i in leadlist]
+    label_file = '9classPreprocess/labels.txt'
     # 读取数据
     data, labels = read_ecg_data(lead_files, label_file)
     print(f'data.shape = {data.shape}, labels.shape = {labels.shape}')
@@ -215,11 +215,9 @@ if __name__ == "__main__":
     train_epochs(dataloaders=dataloaders, epochs=30, optimizer=optimizer, scheduler=scheduler, loss_func=loss_func)
     end_time = time.time()
     print(f'time: {end_time - start_time}')
-    with open('../5leads_results/times.txt', 'a') as file:
-        file.write(f'time: {end_time - start_time}\n')
 
     max_memory = torch.cuda.max_memory_allocated()
-    with open('../5leads_results/max_memory.txt', 'a') as file:
+    with open('results/max_memory.txt', 'a') as file:
         file.write(f'max memory: {max_memory}\n')
     # 计算验证集上的指标
     all_outputs = []
@@ -228,8 +226,6 @@ if __name__ == "__main__":
     model.eval()
     total_params = sum(p.numel() for p in model.parameters())
     print(f"Total number of parameters: {total_params}")
-    with open('../5leads_results/numberofpara.txt', 'a') as file:
-        file.write(f'Total number of parameters: {total_params}\n')
     preds_all = torch.LongTensor()
     labels_all = torch.LongTensor()
     for batch_x, labels in tqdm(dataloaders['valid']):
@@ -246,5 +242,5 @@ if __name__ == "__main__":
     all_outputs = torch.cat(all_outputs)
     all_labels = torch.cat(all_labels)
 
-    acc = save_metrics(all_outputs, all_labels, f'../5leads_results/results.txt')
+    acc = save_metrics(all_outputs, all_labels, f'results/results.txt')
 
